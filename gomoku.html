@@ -1,17 +1,25 @@
 <style>
-  .grid {
-    display: grid;
-    grid-template-columns: 80px 80px 80px;
+  .grid, #win-w, #win-b {
+    position: absolute;
+    left: 16px;
+    top: 16px;
     width: 240px;
+    height: 240px;
     border: 2px solid black;
     box-sizing: content-box;
   }
-  .grid > div {
+  .grid {
+    display: grid;
+    grid-template-columns: 80px 80px 80px;
+  }
+  .grid > div, .grid > input {
     width: 80px;
     height: 80px;
     border: 2px solid black;
     box-sizing: border-box;
     overflow: hidden;
+    margin: 0;
+    padding: 0;
     position: relative;
   }
   body {
@@ -60,7 +68,7 @@
     background: rgba(0,0,255,0.2);
   }
   .labels .b label {
-    background: rgba(0,255,0,0.2);
+    background: rgba(255,0,0,0.2);
   }
   .labels .w::before, .labels .b::before {
     font-size: 100px;
@@ -71,27 +79,60 @@
   .labels .b::before {
     content: counter(wmoves);
   }
-  body:has(input[name="00"]:checked) .l00 { display: none; }
-  body:has(input[name="01"]:checked) .l01 { display: none; }
-  body:has(input[name="02"]:checked) .l02 { display: none; }
-  body:has(input[name="10"]:checked) .l10 { display: none; }
-  body:has(input[name="11"]:checked) .l11 { display: none; }
-  body:has(input[name="12"]:checked) .l12 { display: none; }
-  body:has(input[name="20"]:checked) .l20 { display: none; }
-  body:has(input[name="21"]:checked) .l21 { display: none; }
-  body:has(input[name="22"]:checked) .l22 { display: none; }
+  body:has(input[name="00"].filled:checked) .l00 { display: none; }
+  body:has(input[name="01"].filled:checked) .l01 { display: none; }
+  body:has(input[name="02"].filled:checked) .l02 { display: none; }
+  body:has(input[name="10"].filled:checked) .l10 { display: none; }
+  body:has(input[name="11"].filled:checked) .l11 { display: none; }
+  body:has(input[name="12"].filled:checked) .l12 { display: none; }
+  body:has(input[name="20"].filled:checked) .l20 { display: none; }
+  body:has(input[name="21"].filled:checked) .l21 { display: none; }
+  body:has(input[name="22"].filled:checked) .l22 { display: none; }
+  body:has(input[value="b"]:checked+*+*+input[value="b"]:checked+*+*+input[value="b"]:checked) #win-b,
+  body:has(input[value="b"]:checked+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+input[value="b"]:checked) #win-b,
+  body:has(input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked) #win-b,
+  body:has(input[value="b"]:checked+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+input[value="b"]:checked) #win-b {
+    display: flex;
+  }
+  body:has(input[value="w"]:checked+*+*+input[value="w"]:checked+*+*+input[value="w"]:checked) #win-w,
+  body:has(input[value="w"]:checked+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+input[value="w"]:checked) #win-w,
+  body:has(input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked) #win-w,
+  body:has(input[value="w"]:checked+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+input[value="w"]:checked) #win-w {
+    display: flex;
+  }
+  #win-b, #win-w {
+    display: none;
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    width: 240px;
+    height: 240px;
+    background: rgba(0, 0, 0, 0.2);
+    justify-content: center;
+    align-items: center;
+    border-color: transparent;
+  }
+  #win-b div, #win-w div {
+    font-size: 32px;
+    padding: 20px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.8);
+  }
+  .separator { display: none; }
 </style>
 
 <div class="checkboxes grid">
-  <div><input type="radio" id="00-b" name="00" value="b"><input type="radio" id="00-w" name="00" value="w"></div>
-  <div><input type="radio" id="01-b" name="01" value="b"><input type="radio" id="01-w" name="01" value="w"></div>
-  <div><input type="radio" id="02-b" name="02" value="b"><input type="radio" id="02-w" name="02" value="w"></div>
-  <div><input type="radio" id="10-b" name="10" value="b"><input type="radio" id="10-w" name="10" value="w"></div>
-  <div><input type="radio" id="11-b" name="11" value="b"><input type="radio" id="11-w" name="11" value="w"></div>
-  <div><input type="radio" id="12-b" name="12" value="b"><input type="radio" id="12-w" name="12" value="w"></div>
-  <div><input type="radio" id="20-b" name="20" value="b"><input type="radio" id="20-w" name="20" value="w"></div>
-  <div><input type="radio" id="21-b" name="21" value="b"><input type="radio" id="21-w" name="21" value="w"></div>
-  <div><input type="radio" id="22-b" name="22" value="b"><input type="radio" id="22-w" name="22" value="w"></div>
+  <input type="radio" id="00-b" name="00" class="filled" value="b"><input type="radio" id="00-w" name="00" class="filled" value="w"><input type="radio" name="00" checked>
+  <input type="radio" id="01-b" name="01" class="filled" value="b"><input type="radio" id="01-w" name="01" class="filled" value="w"><input type="radio" name="01" checked>
+  <input type="radio" id="02-b" name="02" class="filled" value="b"><input type="radio" id="02-w" name="02" class="filled" value="w"><input type="radio" name="02" checked>
+  <div class="separator"></div>
+  <input type="radio" id="10-b" name="10" class="filled" value="b"><input type="radio" id="10-w" name="10" class="filled" value="w"><input type="radio" name="10" checked>
+  <input type="radio" id="11-b" name="11" class="filled" value="b"><input type="radio" id="11-w" name="11" class="filled" value="w"><input type="radio" name="11" checked>
+  <input type="radio" id="12-b" name="12" class="filled" value="b"><input type="radio" id="12-w" name="12" class="filled" value="w"><input type="radio" name="12" checked>
+  <div class="separator"></div>
+  <input type="radio" id="20-b" name="20" class="filled" value="b"><input type="radio" id="20-w" name="20" class="filled" value="w"><input type="radio" name="20" checked>
+  <input type="radio" id="21-b" name="21" class="filled" value="b"><input type="radio" id="21-w" name="21" class="filled" value="w"><input type="radio" name="21" checked>
+  <input type="radio" id="22-b" name="22" class="filled" value="b"><input type="radio" id="22-w" name="22" class="filled" value="w"><input type="radio" name="22" checked>
 </div>
 <div class="labels grid">
   <div><div class="b l00"><label for="00-b"></label></div><div class="w l00"><label for="00-w"></label></div></div>
@@ -105,3 +146,9 @@
   <div><div class="b l22"><label for="22-b"></label></div><div class="w l22"><label for="22-w"></label></div></div>
 </div>
 <div id="result"></div>
+<div id="win-b">
+  <div>Winner: 🌺</div>
+</div>
+<div id="win-w">
+  <div>Winner: 🏝</div>
+</div>
