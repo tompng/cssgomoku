@@ -1,0 +1,417 @@
+<style>
+  .grid, #win-w, #win-b {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    width: 720px;
+    height: 720px;
+    border: 2px solid black;
+    box-sizing: content-box;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 80px 80px 80px 80px 80px 80px 80px 80px 80px;
+  }
+  .labels.grid > div {
+    overflow: hidden;
+  }
+  .grid > div, .grid > input {
+    width: 80px;
+    height: 80px;
+    border: 2px solid black;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+  body {
+    counter-reset: bmoves 1000 wmoves 0;
+  }
+  input { display: none; }
+  input:checked { display: block; }
+  input[value="b"]:checked { counter-increment: wmoves 1000 bmoves -1000; }
+  input[value="w"]:checked { counter-increment: wmoves -1000 bmoves 1000; }
+  input:checked::before {
+    background: white;
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    font-size: 48px;
+  }
+  input[value="b"]:checked::before {
+    content: '🌺'
+  }
+  input[value="w"]:checked::before {
+    content: '🏝'
+  }
+  .labels .w, .labels .b {
+    position: absolute;
+    left: -80px;
+    top: 0px;
+    white-space: nowrap;
+    height: 0;
+  }
+  .labels label {
+    display: inline-block;
+    width: 160px;
+    height: 160px;
+  }
+  .labels .w::before, .labels .b::before {
+    font-size: 100px;
+  }
+  .labels .w::before {
+    content: counter(bmoves);
+  }
+  .labels .b::before {
+    content: counter(wmoves);
+  }
+  input:checked::after {
+    display: none;
+    position: absolute;
+    border: 8px solid rgba(255, 160, 0, 0.4);
+    box-sizing: border-box;
+    border-radius: 40px;
+    height: 80px;
+    transform-origin: 40px 40px;
+    z-index: 1;
+  }
+  body:has(input[name="00"].filled:checked) .l00 { display: none; }
+  body:has(input[name="01"].filled:checked) .l01 { display: none; }
+  body:has(input[name="02"].filled:checked) .l02 { display: none; }
+  body:has(input[name="03"].filled:checked) .l03 { display: none; }
+  body:has(input[name="04"].filled:checked) .l04 { display: none; }
+  body:has(input[name="05"].filled:checked) .l05 { display: none; }
+  body:has(input[name="06"].filled:checked) .l06 { display: none; }
+  body:has(input[name="07"].filled:checked) .l07 { display: none; }
+  body:has(input[name="08"].filled:checked) .l08 { display: none; }
+  body:has(input[name="10"].filled:checked) .l10 { display: none; }
+  body:has(input[name="11"].filled:checked) .l11 { display: none; }
+  body:has(input[name="12"].filled:checked) .l12 { display: none; }
+  body:has(input[name="13"].filled:checked) .l13 { display: none; }
+  body:has(input[name="14"].filled:checked) .l14 { display: none; }
+  body:has(input[name="15"].filled:checked) .l15 { display: none; }
+  body:has(input[name="16"].filled:checked) .l16 { display: none; }
+  body:has(input[name="17"].filled:checked) .l17 { display: none; }
+  body:has(input[name="18"].filled:checked) .l18 { display: none; }
+  body:has(input[name="20"].filled:checked) .l20 { display: none; }
+  body:has(input[name="21"].filled:checked) .l21 { display: none; }
+  body:has(input[name="22"].filled:checked) .l22 { display: none; }
+  body:has(input[name="23"].filled:checked) .l23 { display: none; }
+  body:has(input[name="24"].filled:checked) .l24 { display: none; }
+  body:has(input[name="25"].filled:checked) .l25 { display: none; }
+  body:has(input[name="26"].filled:checked) .l26 { display: none; }
+  body:has(input[name="27"].filled:checked) .l27 { display: none; }
+  body:has(input[name="28"].filled:checked) .l28 { display: none; }
+  body:has(input[name="30"].filled:checked) .l30 { display: none; }
+  body:has(input[name="31"].filled:checked) .l31 { display: none; }
+  body:has(input[name="32"].filled:checked) .l32 { display: none; }
+  body:has(input[name="33"].filled:checked) .l33 { display: none; }
+  body:has(input[name="34"].filled:checked) .l34 { display: none; }
+  body:has(input[name="35"].filled:checked) .l35 { display: none; }
+  body:has(input[name="36"].filled:checked) .l36 { display: none; }
+  body:has(input[name="37"].filled:checked) .l37 { display: none; }
+  body:has(input[name="38"].filled:checked) .l38 { display: none; }
+  body:has(input[name="40"].filled:checked) .l40 { display: none; }
+  body:has(input[name="41"].filled:checked) .l41 { display: none; }
+  body:has(input[name="42"].filled:checked) .l42 { display: none; }
+  body:has(input[name="43"].filled:checked) .l43 { display: none; }
+  body:has(input[name="44"].filled:checked) .l44 { display: none; }
+  body:has(input[name="45"].filled:checked) .l45 { display: none; }
+  body:has(input[name="46"].filled:checked) .l46 { display: none; }
+  body:has(input[name="47"].filled:checked) .l47 { display: none; }
+  body:has(input[name="48"].filled:checked) .l48 { display: none; }
+  body:has(input[name="50"].filled:checked) .l50 { display: none; }
+  body:has(input[name="51"].filled:checked) .l51 { display: none; }
+  body:has(input[name="52"].filled:checked) .l52 { display: none; }
+  body:has(input[name="53"].filled:checked) .l53 { display: none; }
+  body:has(input[name="54"].filled:checked) .l54 { display: none; }
+  body:has(input[name="55"].filled:checked) .l55 { display: none; }
+  body:has(input[name="56"].filled:checked) .l56 { display: none; }
+  body:has(input[name="57"].filled:checked) .l57 { display: none; }
+  body:has(input[name="58"].filled:checked) .l58 { display: none; }
+  body:has(input[name="60"].filled:checked) .l60 { display: none; }
+  body:has(input[name="61"].filled:checked) .l61 { display: none; }
+  body:has(input[name="62"].filled:checked) .l62 { display: none; }
+  body:has(input[name="63"].filled:checked) .l63 { display: none; }
+  body:has(input[name="64"].filled:checked) .l64 { display: none; }
+  body:has(input[name="65"].filled:checked) .l65 { display: none; }
+  body:has(input[name="66"].filled:checked) .l66 { display: none; }
+  body:has(input[name="67"].filled:checked) .l67 { display: none; }
+  body:has(input[name="68"].filled:checked) .l68 { display: none; }
+  body:has(input[name="70"].filled:checked) .l70 { display: none; }
+  body:has(input[name="71"].filled:checked) .l71 { display: none; }
+  body:has(input[name="72"].filled:checked) .l72 { display: none; }
+  body:has(input[name="73"].filled:checked) .l73 { display: none; }
+  body:has(input[name="74"].filled:checked) .l74 { display: none; }
+  body:has(input[name="75"].filled:checked) .l75 { display: none; }
+  body:has(input[name="76"].filled:checked) .l76 { display: none; }
+  body:has(input[name="77"].filled:checked) .l77 { display: none; }
+  body:has(input[name="78"].filled:checked) .l78 { display: none; }
+  body:has(input[name="80"].filled:checked) .l80 { display: none; }
+  body:has(input[name="81"].filled:checked) .l81 { display: none; }
+  body:has(input[name="82"].filled:checked) .l82 { display: none; }
+  body:has(input[name="83"].filled:checked) .l83 { display: none; }
+  body:has(input[name="84"].filled:checked) .l84 { display: none; }
+  body:has(input[name="85"].filled:checked) .l85 { display: none; }
+  body:has(input[name="86"].filled:checked) .l86 { display: none; }
+  body:has(input[name="87"].filled:checked) .l87 { display: none; }
+  body:has(input[name="88"].filled:checked) .l88 { display: none; }
+  body:has(input[value="b"]:checked+*+*+input[value="b"]:checked+*+*+input[value="b"]:checked+*+*+input[value="b"]:checked+*+*+input[value="b"]:checked) #win-b { display: flex; }
+  body:has(input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked) #win-b { display: flex; }
+  body:has(input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked) #win-b { display: flex; }
+  body:has(input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked) #win-b { display: flex; }
+  input[value="b"]:checked+*+*+input[value="b"]:checked+*+*+input[value="b"]:checked+*+*+input[value="b"]:checked+*+*+input[value="b"]:checked::after {
+    width: 400px;
+    transform: rotate(-180deg);
+    display: block;
+    content: '';
+  }
+  input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked::after {
+    width: 400px;
+    transform: rotate(-90deg);
+    display: block;
+    content: '';
+  }
+  input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked::after {
+    width: 532.5483399593904px;
+    transform: rotate(-135deg);
+    display: block;
+    content: '';
+  }
+  input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="b"]:checked::after {
+    width: 532.5483399593904px;
+    transform: rotate(-45deg);
+    display: block;
+    content: '';
+  }
+  body:has(input[value="w"]:checked+*+*+input[value="w"]:checked+*+*+input[value="w"]:checked+*+*+input[value="w"]:checked+*+*+input[value="w"]:checked) #win-w { display: flex; }
+  body:has(input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked) #win-w { display: flex; }
+  body:has(input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked) #win-w { display: flex; }
+  body:has(input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked) #win-w { display: flex; }
+  input[value="w"]:checked+*+*+input[value="w"]:checked+*+*+input[value="w"]:checked+*+*+input[value="w"]:checked+*+*+input[value="w"]:checked::after {
+    width: 400px;
+    transform: rotate(-180deg);
+    display: block;
+    content: '';
+  }
+  input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked::after {
+    width: 400px;
+    transform: rotate(-90deg);
+    display: block;
+    content: '';
+  }
+  input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked::after {
+    width: 532.5483399593904px;
+    transform: rotate(-135deg);
+    display: block;
+    content: '';
+  }
+  input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+input[value="w"]:checked::after {
+    width: 532.5483399593904px;
+    transform: rotate(-45deg);
+    display: block;
+    content: '';
+  }
+  #win-b, #win-w {
+    display: none;
+    background: rgba(0, 0, 0, 0.2);
+    justify-content: center;
+    align-items: center;
+    border-color: transparent;
+    z-index: 2;
+  }
+  #win-b div, #win-w div {
+    font-size: 48px;
+    padding: 32px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.8);
+  }
+  .separator { display: none; }
+</style>
+<div class="radios grid">
+  <input type="radio" id="00-b" name="00" class="filled" value="b"><input type="radio" id="00-w" name="00" class="filled" value="w"><input type="radio" name="00" checked>
+  <input type="radio" id="01-b" name="01" class="filled" value="b"><input type="radio" id="01-w" name="01" class="filled" value="w"><input type="radio" name="01" checked>
+  <input type="radio" id="02-b" name="02" class="filled" value="b"><input type="radio" id="02-w" name="02" class="filled" value="w"><input type="radio" name="02" checked>
+  <input type="radio" id="03-b" name="03" class="filled" value="b"><input type="radio" id="03-w" name="03" class="filled" value="w"><input type="radio" name="03" checked>
+  <input type="radio" id="04-b" name="04" class="filled" value="b"><input type="radio" id="04-w" name="04" class="filled" value="w"><input type="radio" name="04" checked>
+  <input type="radio" id="05-b" name="05" class="filled" value="b"><input type="radio" id="05-w" name="05" class="filled" value="w"><input type="radio" name="05" checked>
+  <input type="radio" id="06-b" name="06" class="filled" value="b"><input type="radio" id="06-w" name="06" class="filled" value="w"><input type="radio" name="06" checked>
+  <input type="radio" id="07-b" name="07" class="filled" value="b"><input type="radio" id="07-w" name="07" class="filled" value="w"><input type="radio" name="07" checked>
+  <input type="radio" id="08-b" name="08" class="filled" value="b"><input type="radio" id="08-w" name="08" class="filled" value="w"><input type="radio" name="08" checked>
+  <div class="separator"></div>
+  <input type="radio" id="10-b" name="10" class="filled" value="b"><input type="radio" id="10-w" name="10" class="filled" value="w"><input type="radio" name="10" checked>
+  <input type="radio" id="11-b" name="11" class="filled" value="b"><input type="radio" id="11-w" name="11" class="filled" value="w"><input type="radio" name="11" checked>
+  <input type="radio" id="12-b" name="12" class="filled" value="b"><input type="radio" id="12-w" name="12" class="filled" value="w"><input type="radio" name="12" checked>
+  <input type="radio" id="13-b" name="13" class="filled" value="b"><input type="radio" id="13-w" name="13" class="filled" value="w"><input type="radio" name="13" checked>
+  <input type="radio" id="14-b" name="14" class="filled" value="b"><input type="radio" id="14-w" name="14" class="filled" value="w"><input type="radio" name="14" checked>
+  <input type="radio" id="15-b" name="15" class="filled" value="b"><input type="radio" id="15-w" name="15" class="filled" value="w"><input type="radio" name="15" checked>
+  <input type="radio" id="16-b" name="16" class="filled" value="b"><input type="radio" id="16-w" name="16" class="filled" value="w"><input type="radio" name="16" checked>
+  <input type="radio" id="17-b" name="17" class="filled" value="b"><input type="radio" id="17-w" name="17" class="filled" value="w"><input type="radio" name="17" checked>
+  <input type="radio" id="18-b" name="18" class="filled" value="b"><input type="radio" id="18-w" name="18" class="filled" value="w"><input type="radio" name="18" checked>
+  <div class="separator"></div>
+  <input type="radio" id="20-b" name="20" class="filled" value="b"><input type="radio" id="20-w" name="20" class="filled" value="w"><input type="radio" name="20" checked>
+  <input type="radio" id="21-b" name="21" class="filled" value="b"><input type="radio" id="21-w" name="21" class="filled" value="w"><input type="radio" name="21" checked>
+  <input type="radio" id="22-b" name="22" class="filled" value="b"><input type="radio" id="22-w" name="22" class="filled" value="w"><input type="radio" name="22" checked>
+  <input type="radio" id="23-b" name="23" class="filled" value="b"><input type="radio" id="23-w" name="23" class="filled" value="w"><input type="radio" name="23" checked>
+  <input type="radio" id="24-b" name="24" class="filled" value="b"><input type="radio" id="24-w" name="24" class="filled" value="w"><input type="radio" name="24" checked>
+  <input type="radio" id="25-b" name="25" class="filled" value="b"><input type="radio" id="25-w" name="25" class="filled" value="w"><input type="radio" name="25" checked>
+  <input type="radio" id="26-b" name="26" class="filled" value="b"><input type="radio" id="26-w" name="26" class="filled" value="w"><input type="radio" name="26" checked>
+  <input type="radio" id="27-b" name="27" class="filled" value="b"><input type="radio" id="27-w" name="27" class="filled" value="w"><input type="radio" name="27" checked>
+  <input type="radio" id="28-b" name="28" class="filled" value="b"><input type="radio" id="28-w" name="28" class="filled" value="w"><input type="radio" name="28" checked>
+  <div class="separator"></div>
+  <input type="radio" id="30-b" name="30" class="filled" value="b"><input type="radio" id="30-w" name="30" class="filled" value="w"><input type="radio" name="30" checked>
+  <input type="radio" id="31-b" name="31" class="filled" value="b"><input type="radio" id="31-w" name="31" class="filled" value="w"><input type="radio" name="31" checked>
+  <input type="radio" id="32-b" name="32" class="filled" value="b"><input type="radio" id="32-w" name="32" class="filled" value="w"><input type="radio" name="32" checked>
+  <input type="radio" id="33-b" name="33" class="filled" value="b"><input type="radio" id="33-w" name="33" class="filled" value="w"><input type="radio" name="33" checked>
+  <input type="radio" id="34-b" name="34" class="filled" value="b"><input type="radio" id="34-w" name="34" class="filled" value="w"><input type="radio" name="34" checked>
+  <input type="radio" id="35-b" name="35" class="filled" value="b"><input type="radio" id="35-w" name="35" class="filled" value="w"><input type="radio" name="35" checked>
+  <input type="radio" id="36-b" name="36" class="filled" value="b"><input type="radio" id="36-w" name="36" class="filled" value="w"><input type="radio" name="36" checked>
+  <input type="radio" id="37-b" name="37" class="filled" value="b"><input type="radio" id="37-w" name="37" class="filled" value="w"><input type="radio" name="37" checked>
+  <input type="radio" id="38-b" name="38" class="filled" value="b"><input type="radio" id="38-w" name="38" class="filled" value="w"><input type="radio" name="38" checked>
+  <div class="separator"></div>
+  <input type="radio" id="40-b" name="40" class="filled" value="b"><input type="radio" id="40-w" name="40" class="filled" value="w"><input type="radio" name="40" checked>
+  <input type="radio" id="41-b" name="41" class="filled" value="b"><input type="radio" id="41-w" name="41" class="filled" value="w"><input type="radio" name="41" checked>
+  <input type="radio" id="42-b" name="42" class="filled" value="b"><input type="radio" id="42-w" name="42" class="filled" value="w"><input type="radio" name="42" checked>
+  <input type="radio" id="43-b" name="43" class="filled" value="b"><input type="radio" id="43-w" name="43" class="filled" value="w"><input type="radio" name="43" checked>
+  <input type="radio" id="44-b" name="44" class="filled" value="b"><input type="radio" id="44-w" name="44" class="filled" value="w"><input type="radio" name="44" checked>
+  <input type="radio" id="45-b" name="45" class="filled" value="b"><input type="radio" id="45-w" name="45" class="filled" value="w"><input type="radio" name="45" checked>
+  <input type="radio" id="46-b" name="46" class="filled" value="b"><input type="radio" id="46-w" name="46" class="filled" value="w"><input type="radio" name="46" checked>
+  <input type="radio" id="47-b" name="47" class="filled" value="b"><input type="radio" id="47-w" name="47" class="filled" value="w"><input type="radio" name="47" checked>
+  <input type="radio" id="48-b" name="48" class="filled" value="b"><input type="radio" id="48-w" name="48" class="filled" value="w"><input type="radio" name="48" checked>
+  <div class="separator"></div>
+  <input type="radio" id="50-b" name="50" class="filled" value="b"><input type="radio" id="50-w" name="50" class="filled" value="w"><input type="radio" name="50" checked>
+  <input type="radio" id="51-b" name="51" class="filled" value="b"><input type="radio" id="51-w" name="51" class="filled" value="w"><input type="radio" name="51" checked>
+  <input type="radio" id="52-b" name="52" class="filled" value="b"><input type="radio" id="52-w" name="52" class="filled" value="w"><input type="radio" name="52" checked>
+  <input type="radio" id="53-b" name="53" class="filled" value="b"><input type="radio" id="53-w" name="53" class="filled" value="w"><input type="radio" name="53" checked>
+  <input type="radio" id="54-b" name="54" class="filled" value="b"><input type="radio" id="54-w" name="54" class="filled" value="w"><input type="radio" name="54" checked>
+  <input type="radio" id="55-b" name="55" class="filled" value="b"><input type="radio" id="55-w" name="55" class="filled" value="w"><input type="radio" name="55" checked>
+  <input type="radio" id="56-b" name="56" class="filled" value="b"><input type="radio" id="56-w" name="56" class="filled" value="w"><input type="radio" name="56" checked>
+  <input type="radio" id="57-b" name="57" class="filled" value="b"><input type="radio" id="57-w" name="57" class="filled" value="w"><input type="radio" name="57" checked>
+  <input type="radio" id="58-b" name="58" class="filled" value="b"><input type="radio" id="58-w" name="58" class="filled" value="w"><input type="radio" name="58" checked>
+  <div class="separator"></div>
+  <input type="radio" id="60-b" name="60" class="filled" value="b"><input type="radio" id="60-w" name="60" class="filled" value="w"><input type="radio" name="60" checked>
+  <input type="radio" id="61-b" name="61" class="filled" value="b"><input type="radio" id="61-w" name="61" class="filled" value="w"><input type="radio" name="61" checked>
+  <input type="radio" id="62-b" name="62" class="filled" value="b"><input type="radio" id="62-w" name="62" class="filled" value="w"><input type="radio" name="62" checked>
+  <input type="radio" id="63-b" name="63" class="filled" value="b"><input type="radio" id="63-w" name="63" class="filled" value="w"><input type="radio" name="63" checked>
+  <input type="radio" id="64-b" name="64" class="filled" value="b"><input type="radio" id="64-w" name="64" class="filled" value="w"><input type="radio" name="64" checked>
+  <input type="radio" id="65-b" name="65" class="filled" value="b"><input type="radio" id="65-w" name="65" class="filled" value="w"><input type="radio" name="65" checked>
+  <input type="radio" id="66-b" name="66" class="filled" value="b"><input type="radio" id="66-w" name="66" class="filled" value="w"><input type="radio" name="66" checked>
+  <input type="radio" id="67-b" name="67" class="filled" value="b"><input type="radio" id="67-w" name="67" class="filled" value="w"><input type="radio" name="67" checked>
+  <input type="radio" id="68-b" name="68" class="filled" value="b"><input type="radio" id="68-w" name="68" class="filled" value="w"><input type="radio" name="68" checked>
+  <div class="separator"></div>
+  <input type="radio" id="70-b" name="70" class="filled" value="b"><input type="radio" id="70-w" name="70" class="filled" value="w"><input type="radio" name="70" checked>
+  <input type="radio" id="71-b" name="71" class="filled" value="b"><input type="radio" id="71-w" name="71" class="filled" value="w"><input type="radio" name="71" checked>
+  <input type="radio" id="72-b" name="72" class="filled" value="b"><input type="radio" id="72-w" name="72" class="filled" value="w"><input type="radio" name="72" checked>
+  <input type="radio" id="73-b" name="73" class="filled" value="b"><input type="radio" id="73-w" name="73" class="filled" value="w"><input type="radio" name="73" checked>
+  <input type="radio" id="74-b" name="74" class="filled" value="b"><input type="radio" id="74-w" name="74" class="filled" value="w"><input type="radio" name="74" checked>
+  <input type="radio" id="75-b" name="75" class="filled" value="b"><input type="radio" id="75-w" name="75" class="filled" value="w"><input type="radio" name="75" checked>
+  <input type="radio" id="76-b" name="76" class="filled" value="b"><input type="radio" id="76-w" name="76" class="filled" value="w"><input type="radio" name="76" checked>
+  <input type="radio" id="77-b" name="77" class="filled" value="b"><input type="radio" id="77-w" name="77" class="filled" value="w"><input type="radio" name="77" checked>
+  <input type="radio" id="78-b" name="78" class="filled" value="b"><input type="radio" id="78-w" name="78" class="filled" value="w"><input type="radio" name="78" checked>
+  <div class="separator"></div>
+  <input type="radio" id="80-b" name="80" class="filled" value="b"><input type="radio" id="80-w" name="80" class="filled" value="w"><input type="radio" name="80" checked>
+  <input type="radio" id="81-b" name="81" class="filled" value="b"><input type="radio" id="81-w" name="81" class="filled" value="w"><input type="radio" name="81" checked>
+  <input type="radio" id="82-b" name="82" class="filled" value="b"><input type="radio" id="82-w" name="82" class="filled" value="w"><input type="radio" name="82" checked>
+  <input type="radio" id="83-b" name="83" class="filled" value="b"><input type="radio" id="83-w" name="83" class="filled" value="w"><input type="radio" name="83" checked>
+  <input type="radio" id="84-b" name="84" class="filled" value="b"><input type="radio" id="84-w" name="84" class="filled" value="w"><input type="radio" name="84" checked>
+  <input type="radio" id="85-b" name="85" class="filled" value="b"><input type="radio" id="85-w" name="85" class="filled" value="w"><input type="radio" name="85" checked>
+  <input type="radio" id="86-b" name="86" class="filled" value="b"><input type="radio" id="86-w" name="86" class="filled" value="w"><input type="radio" name="86" checked>
+  <input type="radio" id="87-b" name="87" class="filled" value="b"><input type="radio" id="87-w" name="87" class="filled" value="w"><input type="radio" name="87" checked>
+  <input type="radio" id="88-b" name="88" class="filled" value="b"><input type="radio" id="88-w" name="88" class="filled" value="w"><input type="radio" name="88" checked>
+  <div class="separator"></div>
+</div>
+<div class="labels grid">
+  <div><div class="b l00"><label for="00-b"></label></div><div class="w l00"><label for="00-w"></label></div></div>
+  <div><div class="b l01"><label for="01-b"></label></div><div class="w l01"><label for="01-w"></label></div></div>
+  <div><div class="b l02"><label for="02-b"></label></div><div class="w l02"><label for="02-w"></label></div></div>
+  <div><div class="b l03"><label for="03-b"></label></div><div class="w l03"><label for="03-w"></label></div></div>
+  <div><div class="b l04"><label for="04-b"></label></div><div class="w l04"><label for="04-w"></label></div></div>
+  <div><div class="b l05"><label for="05-b"></label></div><div class="w l05"><label for="05-w"></label></div></div>
+  <div><div class="b l06"><label for="06-b"></label></div><div class="w l06"><label for="06-w"></label></div></div>
+  <div><div class="b l07"><label for="07-b"></label></div><div class="w l07"><label for="07-w"></label></div></div>
+  <div><div class="b l08"><label for="08-b"></label></div><div class="w l08"><label for="08-w"></label></div></div>
+  <div><div class="b l10"><label for="10-b"></label></div><div class="w l10"><label for="10-w"></label></div></div>
+  <div><div class="b l11"><label for="11-b"></label></div><div class="w l11"><label for="11-w"></label></div></div>
+  <div><div class="b l12"><label for="12-b"></label></div><div class="w l12"><label for="12-w"></label></div></div>
+  <div><div class="b l13"><label for="13-b"></label></div><div class="w l13"><label for="13-w"></label></div></div>
+  <div><div class="b l14"><label for="14-b"></label></div><div class="w l14"><label for="14-w"></label></div></div>
+  <div><div class="b l15"><label for="15-b"></label></div><div class="w l15"><label for="15-w"></label></div></div>
+  <div><div class="b l16"><label for="16-b"></label></div><div class="w l16"><label for="16-w"></label></div></div>
+  <div><div class="b l17"><label for="17-b"></label></div><div class="w l17"><label for="17-w"></label></div></div>
+  <div><div class="b l18"><label for="18-b"></label></div><div class="w l18"><label for="18-w"></label></div></div>
+  <div><div class="b l20"><label for="20-b"></label></div><div class="w l20"><label for="20-w"></label></div></div>
+  <div><div class="b l21"><label for="21-b"></label></div><div class="w l21"><label for="21-w"></label></div></div>
+  <div><div class="b l22"><label for="22-b"></label></div><div class="w l22"><label for="22-w"></label></div></div>
+  <div><div class="b l23"><label for="23-b"></label></div><div class="w l23"><label for="23-w"></label></div></div>
+  <div><div class="b l24"><label for="24-b"></label></div><div class="w l24"><label for="24-w"></label></div></div>
+  <div><div class="b l25"><label for="25-b"></label></div><div class="w l25"><label for="25-w"></label></div></div>
+  <div><div class="b l26"><label for="26-b"></label></div><div class="w l26"><label for="26-w"></label></div></div>
+  <div><div class="b l27"><label for="27-b"></label></div><div class="w l27"><label for="27-w"></label></div></div>
+  <div><div class="b l28"><label for="28-b"></label></div><div class="w l28"><label for="28-w"></label></div></div>
+  <div><div class="b l30"><label for="30-b"></label></div><div class="w l30"><label for="30-w"></label></div></div>
+  <div><div class="b l31"><label for="31-b"></label></div><div class="w l31"><label for="31-w"></label></div></div>
+  <div><div class="b l32"><label for="32-b"></label></div><div class="w l32"><label for="32-w"></label></div></div>
+  <div><div class="b l33"><label for="33-b"></label></div><div class="w l33"><label for="33-w"></label></div></div>
+  <div><div class="b l34"><label for="34-b"></label></div><div class="w l34"><label for="34-w"></label></div></div>
+  <div><div class="b l35"><label for="35-b"></label></div><div class="w l35"><label for="35-w"></label></div></div>
+  <div><div class="b l36"><label for="36-b"></label></div><div class="w l36"><label for="36-w"></label></div></div>
+  <div><div class="b l37"><label for="37-b"></label></div><div class="w l37"><label for="37-w"></label></div></div>
+  <div><div class="b l38"><label for="38-b"></label></div><div class="w l38"><label for="38-w"></label></div></div>
+  <div><div class="b l40"><label for="40-b"></label></div><div class="w l40"><label for="40-w"></label></div></div>
+  <div><div class="b l41"><label for="41-b"></label></div><div class="w l41"><label for="41-w"></label></div></div>
+  <div><div class="b l42"><label for="42-b"></label></div><div class="w l42"><label for="42-w"></label></div></div>
+  <div><div class="b l43"><label for="43-b"></label></div><div class="w l43"><label for="43-w"></label></div></div>
+  <div><div class="b l44"><label for="44-b"></label></div><div class="w l44"><label for="44-w"></label></div></div>
+  <div><div class="b l45"><label for="45-b"></label></div><div class="w l45"><label for="45-w"></label></div></div>
+  <div><div class="b l46"><label for="46-b"></label></div><div class="w l46"><label for="46-w"></label></div></div>
+  <div><div class="b l47"><label for="47-b"></label></div><div class="w l47"><label for="47-w"></label></div></div>
+  <div><div class="b l48"><label for="48-b"></label></div><div class="w l48"><label for="48-w"></label></div></div>
+  <div><div class="b l50"><label for="50-b"></label></div><div class="w l50"><label for="50-w"></label></div></div>
+  <div><div class="b l51"><label for="51-b"></label></div><div class="w l51"><label for="51-w"></label></div></div>
+  <div><div class="b l52"><label for="52-b"></label></div><div class="w l52"><label for="52-w"></label></div></div>
+  <div><div class="b l53"><label for="53-b"></label></div><div class="w l53"><label for="53-w"></label></div></div>
+  <div><div class="b l54"><label for="54-b"></label></div><div class="w l54"><label for="54-w"></label></div></div>
+  <div><div class="b l55"><label for="55-b"></label></div><div class="w l55"><label for="55-w"></label></div></div>
+  <div><div class="b l56"><label for="56-b"></label></div><div class="w l56"><label for="56-w"></label></div></div>
+  <div><div class="b l57"><label for="57-b"></label></div><div class="w l57"><label for="57-w"></label></div></div>
+  <div><div class="b l58"><label for="58-b"></label></div><div class="w l58"><label for="58-w"></label></div></div>
+  <div><div class="b l60"><label for="60-b"></label></div><div class="w l60"><label for="60-w"></label></div></div>
+  <div><div class="b l61"><label for="61-b"></label></div><div class="w l61"><label for="61-w"></label></div></div>
+  <div><div class="b l62"><label for="62-b"></label></div><div class="w l62"><label for="62-w"></label></div></div>
+  <div><div class="b l63"><label for="63-b"></label></div><div class="w l63"><label for="63-w"></label></div></div>
+  <div><div class="b l64"><label for="64-b"></label></div><div class="w l64"><label for="64-w"></label></div></div>
+  <div><div class="b l65"><label for="65-b"></label></div><div class="w l65"><label for="65-w"></label></div></div>
+  <div><div class="b l66"><label for="66-b"></label></div><div class="w l66"><label for="66-w"></label></div></div>
+  <div><div class="b l67"><label for="67-b"></label></div><div class="w l67"><label for="67-w"></label></div></div>
+  <div><div class="b l68"><label for="68-b"></label></div><div class="w l68"><label for="68-w"></label></div></div>
+  <div><div class="b l70"><label for="70-b"></label></div><div class="w l70"><label for="70-w"></label></div></div>
+  <div><div class="b l71"><label for="71-b"></label></div><div class="w l71"><label for="71-w"></label></div></div>
+  <div><div class="b l72"><label for="72-b"></label></div><div class="w l72"><label for="72-w"></label></div></div>
+  <div><div class="b l73"><label for="73-b"></label></div><div class="w l73"><label for="73-w"></label></div></div>
+  <div><div class="b l74"><label for="74-b"></label></div><div class="w l74"><label for="74-w"></label></div></div>
+  <div><div class="b l75"><label for="75-b"></label></div><div class="w l75"><label for="75-w"></label></div></div>
+  <div><div class="b l76"><label for="76-b"></label></div><div class="w l76"><label for="76-w"></label></div></div>
+  <div><div class="b l77"><label for="77-b"></label></div><div class="w l77"><label for="77-w"></label></div></div>
+  <div><div class="b l78"><label for="78-b"></label></div><div class="w l78"><label for="78-w"></label></div></div>
+  <div><div class="b l80"><label for="80-b"></label></div><div class="w l80"><label for="80-w"></label></div></div>
+  <div><div class="b l81"><label for="81-b"></label></div><div class="w l81"><label for="81-w"></label></div></div>
+  <div><div class="b l82"><label for="82-b"></label></div><div class="w l82"><label for="82-w"></label></div></div>
+  <div><div class="b l83"><label for="83-b"></label></div><div class="w l83"><label for="83-w"></label></div></div>
+  <div><div class="b l84"><label for="84-b"></label></div><div class="w l84"><label for="84-w"></label></div></div>
+  <div><div class="b l85"><label for="85-b"></label></div><div class="w l85"><label for="85-w"></label></div></div>
+  <div><div class="b l86"><label for="86-b"></label></div><div class="w l86"><label for="86-w"></label></div></div>
+  <div><div class="b l87"><label for="87-b"></label></div><div class="w l87"><label for="87-w"></label></div></div>
+  <div><div class="b l88"><label for="88-b"></label></div><div class="w l88"><label for="88-w"></label></div></div>
+</div>
+<div id="win-b">
+  <div>Winner: 🌺</div>
+</div>
+<div id="win-w">
+  <div>Winner: 🏝</div>
+</div>
