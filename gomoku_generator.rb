@@ -1,6 +1,6 @@
 require 'erb'
 
-size = 8
+size = 9
 moku = 5
 result = ERB.new(DATA.read).result(binding)
 puts result.gsub(/( *\n)* *\n/, "\n")
@@ -19,12 +19,14 @@ __END__
     display: grid;
     grid-template-columns: <%= (['80px'] * size).join(' ') %>;
   }
+  .labels.grid > div {
+    overflow: hidden;
+  }
   .grid > div, .grid > input {
     width: 80px;
     height: 80px;
     border: 2px solid black;
     box-sizing: border-box;
-    overflow: hidden;
     margin: 0;
     padding: 0;
     position: relative;
@@ -77,15 +79,50 @@ __END__
   .labels .b::before {
     content: counter(wmoves);
   }
+  input:checked::after {
+    display: none;
+    position: absolute;
+    border: 8px solid rgba(255, 160, 0, 0.4);
+    box-sizing: border-box;
+    border-radius: 40px;
+    height: 80px;
+    transform-origin: 40px 40px;
+    z-index: 1;
+  }
   <% [*0...size].product([*0...size]).map(&:join).each do |ij| %>
   body:has(input[name="<%= ij %>"].filled:checked) .l<%= ij %> { display: none; }
   <% end %>
   <% ['b', 'w'].each do |which| %>
-  body:has(<%= (%W[input[value="#{which}"]:checked] * moku).join((['+'] * 3).join('*')) %>) #win-<%= which %>,
-  body:has(<%= (%W[input[value="#{which}"]:checked] * moku).join((['+'] * (3 * size + 1)).join('*')) %>) #win-<%= which %>,
-  body:has(<%= (%W[input[value="#{which}"]:checked] * moku).join((['+'] * (3 * (size + 1) + 1)).join('*')) %>) #win-<%= which %>,
-  body:has(<%= (%W[input[value="#{which}"]:checked] * moku).join((['+'] * (3 * (size - 1) + 1)).join('*')) %>) #win-<%= which %> {
-    display: flex;
+    <% horizontal = (%W[input[value="#{which}"]:checked] * moku).join((['+'] * 3).join('*')) %>
+    <% vertical = (%W[input[value="#{which}"]:checked] * moku).join((['+'] * (3 * size + 1)).join('*')) %>
+    <% diagonal1 = (%W[input[value="#{which}"]:checked] * moku).join((['+'] * (3 * (size + 1) + 1)).join('*')) %>
+    <% diagonal2 = (%W[input[value="#{which}"]:checked] * moku).join((['+'] * (3 * (size - 1) + 1)).join('*')) %>
+    <% [horizontal, vertical, diagonal1, diagonal2].each do |selector| %>
+  body:has(<%= selector %>) #win-<%= which %> { display: flex; }
+    <% end %>
+  <%= horizontal %>::after {
+    width: <%= moku * 80 %>px;
+    transform: rotate(-180deg);
+    display: block;
+    content: '';
+  }
+  <%= vertical %>::after {
+    width: <%= moku * 80 %>px;
+    transform: rotate(-90deg);
+    display: block;
+    content: '';
+  }
+  <%= diagonal1 %>::after {
+    width: <%= 80 * (1 + (moku - 1) * 2 ** 0.5) %>px;
+    transform: rotate(-135deg);
+    display: block;
+    content: '';
+  }
+  <%= diagonal2 %>::after {
+    width: <%= 80 * (1 + (moku - 1) * 2 ** 0.5) %>px;
+    transform: rotate(-45deg);
+    display: block;
+    content: '';
   }
   <% end %>
   #win-b, #win-w {
@@ -94,6 +131,7 @@ __END__
     justify-content: center;
     align-items: center;
     border-color: transparent;
+    z-index: 2;
   }
   #win-b div, #win-w div {
     font-size: 48px;
