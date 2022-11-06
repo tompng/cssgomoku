@@ -32,13 +32,12 @@ __END__
     position: relative;
   }
   body {
-    counter-reset: wmoves 0;
-    counter-reset: bmoves 1000;
+    counter-reset: bmoves 1000 wmoves 0;
   }
   input { display: none; }
   input:checked { display: block; }
-  input[value="b"]:checked { counter-increment: wmoves 1000; counter-increment: bmoves -1000; }
-  input[value="w"]:checked { counter-increment: bmoves -1000; counter-increment: bmoves 1000; }
+  input[value="b"]:checked { counter-increment: wmoves 1000 bmoves -1000; }
+  input[value="w"]:checked { counter-increment: wmoves -1000 bmoves 1000; }
   input:checked::before {
     background: white;
     content: '';
