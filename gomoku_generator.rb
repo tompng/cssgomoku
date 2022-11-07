@@ -141,7 +141,7 @@ __END__
   .separator { display: none; }
 </style>
 
-<div class="checkboxes grid">
+<div class="radios grid">
   <% size.times do |i| %>
     <% size.times.map { "#{i}#{_1}" }.each do |ij| %>
   <input type="radio" id="<%= ij %>-b" name="<%= ij %>" class="filled" value="b"><input type="radio" id="<%= ij %>-w" name="<%= ij %>" class="filled" value="w"><input type="radio" name="<%= ij %>" checked>
